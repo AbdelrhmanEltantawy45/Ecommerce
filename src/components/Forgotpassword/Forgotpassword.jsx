@@ -1,16 +1,13 @@
 // import React from 'react'
 import React, { useContext, useState } from "react";
 
-import styles from "./Login.module.css";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router";
-import { TokenContext } from "../../Context/TokenContext";
-import { Link } from "react-router-dom";
 
-export default function Login() {
-  let { token, setToken } = useContext(TokenContext);
+
+export default function Forgotpassword() {
 
   const [userMessage, setUseressage] = useState(null);
   const [errmessage, setErrmessage] = useState(null);
@@ -19,34 +16,30 @@ export default function Login() {
 
   let mySchema = Yup.object({
     email: Yup.string().required("email is required").email("not valid email"),
-    password: Yup.string()
-      .required("New password is required")
-      .matches(/^[A-Z][a-z0-9]{3,8}$/, "not valid password"),
+   
   });
 
   let formik = useFormik({
     initialValues: {
       email: "",
-      password: "",
     },
     // validate,
     validationSchema: mySchema,
     onSubmit: (values) => {
-      loginFrom(values);
+      forgotForm(values);
     },
   });
 
-  async function loginFrom(values) {
+  async function forgotForm(values) {
     setIsloading(true);
     return await axios
-      .post("https://ecommerce.routemisr.com/api/v1/auth/signin ", values)
+      .post("https://ecommerce.routemisr.com/api/v1/auth/forgotPasswords", values)
       .then((data) => {
-        localStorage.setItem("userToken", data.data.token);
-        setToken(data.data.token);
+        console.log("datattatat" , data);
         setUseressage(data.data.message);
 
         setIsloading(false);
-        navigate("/");
+        navigate("/forgotpassword/verifycode");
       })
       .catch((err) => {
         setErrmessage(err.response.data.message);
@@ -58,7 +51,7 @@ export default function Login() {
       &lt;&gt;
       <div className="container w-1/2 mx-auto">
         <div className=" mx-auto">
-          <h1 className="text-main text-3xl">Login Now:</h1>
+          <h1 className="text-main text-3xl">Forgot Password:</h1>
           {userMessage ? (
             <div
               className="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
@@ -103,35 +96,9 @@ export default function Login() {
               ) : null}
             </div>
 
-            <div className="my-2">
-              <label
-                htmlFor="password"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Password
-              </label>
-              <input
-                name="password"
-                onBlur={formik.handleBlur}
-                type="password"
-                onChange={formik.handleChange}
-                value={formik.values.password}
-                id="password"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              />
-              {formik.touched.password && formik.errors.password ? (
-                <div
-                  className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-                  role="alert"
-                >
-                  <p>{formik.errors.password}</p>
-                </div>
-              ) : null}
-            </div>
+          
 
-            <div className="text-end">
-              <Link className="hover:underline hover:text-main" to="/forgotpassword">Forget Your Password ?</Link>
-            </div>
+           
 
             {isloading ? (
               <div className="my-4 text-end">
@@ -149,7 +116,7 @@ export default function Login() {
                   type="submit"
                   className="bg-main text-white px-4 py-2 rounded-lg"
                 >
-                  login
+                  Next
                 </button>
               </div>
             )}

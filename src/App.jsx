@@ -1,9 +1,4 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css';
-import Navbar from './components/Navbar/Navbar'
-import Footer from './components/Footer/Footer'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import Home from './components/Home/Home';
@@ -17,7 +12,6 @@ import Notfound from './components/Notfound/Notfound';
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
 import ProtectedAuth from './components/ProtectedAuth/ProtectedAuth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import ProductDetails from './components/ProductDetails/ProductDetails';
 import toast, { Toaster } from 'react-hot-toast';
 import BrandDetails from './components/BrandDetails/BrandDetails';
@@ -25,6 +19,9 @@ import AllOrders from './components/AllOrders/AllOrders';
 import CheckOut from './components/CheckOut/CheckOut';
 import WishList from './components/WishList/WishList';
 import CategoriesDetails from './components/CategoriesDetails/CategoriesDetails';
+import Forgotpassword from './components/Forgotpassword/Forgotpassword';
+import VerifyCode from './components/Forgotpassword/VerifyCode';
+import Resetpassword from './components/Forgotpassword/Resetpassword';
 
 function App() {
 
@@ -32,10 +29,13 @@ function App() {
   
 
   let routes = createBrowserRouter([
-    {path:"", element:<Layout/> ,children:[
+    {path:"/", element:<Layout/> ,children:[
       {index:true, element: <ProtectedRoutes><Home/></ProtectedRoutes> },
       {path:"login", element: <ProtectedAuth><Login/></ProtectedAuth> }, 
       {path:"register", element: <ProtectedAuth><Register/></ProtectedAuth> }, 
+      {path:"forgotpassword", element: <ProtectedAuth><Forgotpassword/></ProtectedAuth> }, 
+      {path:"forgotpassword/verifycode", element: <ProtectedAuth><VerifyCode/></ProtectedAuth> }, 
+      {path:"forgotpassword/verifycode/resetpassword", element: <ProtectedAuth><Resetpassword/></ProtectedAuth> }, 
       {path:"product", element: <ProtectedRoutes><Products/></ProtectedRoutes> }, 
       {path:"allorders", element: <ProtectedRoutes><AllOrders/></ProtectedRoutes> }, 
       {path:"checkout", element: <ProtectedRoutes><CheckOut/></ProtectedRoutes> }, 

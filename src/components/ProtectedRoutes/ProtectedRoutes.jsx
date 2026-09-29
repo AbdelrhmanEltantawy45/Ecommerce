@@ -1,6 +1,5 @@
-import React from 'react'
-import styles from "./ProtectedRoutes.module.css"
-import { Navigate } from 'react-router'
+import { Navigate } from "react-router";
+
 
 export default function ProtectedRoutes(props) {
 
