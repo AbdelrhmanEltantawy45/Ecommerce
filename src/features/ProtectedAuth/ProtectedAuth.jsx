@@ -1,14 +1,11 @@
-import React from 'react'
-import styles from "./ProtectedAuth.module.css"
-import { Navigate } from 'react-router'
+import { Navigate, useLocation } from "react-router-dom";
 
 export default function ProtectedAuth(props) {
+  const location = useLocation();
 
-  if(localStorage.getItem("userToken")){
-    return <Navigate to="/"></Navigate>
-  }else{
-    return props.children
+  if (localStorage.getItem("userToken")) {
+    return <Navigate to={location.state?.from || "/"} replace />;
   }
 
-
+  return props.children;
 }

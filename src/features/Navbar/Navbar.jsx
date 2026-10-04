@@ -22,9 +22,8 @@ const links = [
   { to: "/product", label: "Product" },
   { to: "/categories", label: "Categories" },
   { to: "/brands", label: "Brands" },
+  { to: "/contact", label: "Contact" },
 ];
-
-const contactLink = { to: "/contact", label: "Contact" };
 
 export default function Navbar() {
   let {
@@ -38,15 +37,12 @@ export default function Navbar() {
   let navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
- 
-  const visibleLinks = token ? [...links, contactLink] : [contactLink];
-
   function logout() {
     localStorage.removeItem("userToken");
     setToken(null);
     resetCounters();
     setOpen(false);
-    navigate("/login");
+    navigate("/");
   }
 
   useEffect(() => {
@@ -78,9 +74,8 @@ export default function Navbar() {
           <img src={Logo} className="h-8" alt="Logo" />
         </Link>
 
-        {/* Desktop links */}
         <ul className="hidden items-center gap-8 md:flex">
-          {visibleLinks.map((l) => (
+          {links.map((l) => (
             <li key={l.to}>
               <NavLink
                 to={l.to}
@@ -151,7 +146,7 @@ export default function Navbar() {
                 asChild
                 className="rounded-lg bg-emerald-950 text-white hover:bg-emerald-900"
               >
-                <Link to="/register">Register</Link>
+                <Link to="/register" className="text-rose-300">Register</Link>
               </Button>
             </div>
           )}
@@ -177,23 +172,23 @@ export default function Navbar() {
               </SheetHeader>
 
               <div className="flex h-[calc(100%-5rem)] flex-col justify-between p-4">
-                {token ? (
-                  <>
-                    <ul className="space-y-1">
-                      {links.map((l) => (
-                        <li key={l.to}>
-                          <SheetClose asChild>
-                            <NavLink
-                              to={l.to}
-                              end={l.to === "/"}
-                              className={mobileLinkClass}
-                            >
-                              {l.label}
-                            </NavLink>
-                          </SheetClose>
-                        </li>
-                      ))}
+                <ul className="space-y-1">
+                  {links.map((l) => (
+                    <li key={l.to}>
+                      <SheetClose asChild>
+                        <NavLink
+                          to={l.to}
+                          end={l.to === "/"}
+                          className={mobileLinkClass}
+                        >
+                          {l.label}
+                        </NavLink>
+                      </SheetClose>
+                    </li>
+                  ))}
 
+                  {token && (
+                    <>
                       <li>
                         <SheetClose asChild>
                           <NavLink to="/wishlist" className={mobileLinkClass}>
@@ -219,61 +214,39 @@ export default function Navbar() {
                           </NavLink>
                         </SheetClose>
                       </li>
+                    </>
+                  )}
+                </ul>
 
-                      <li>
-                        <SheetClose asChild>
-                          <NavLink
-                            to={contactLink.to}
-                            className={mobileLinkClass}
-                          >
-                            {contactLink.label}
-                          </NavLink>
-                        </SheetClose>
-                      </li>
-                    </ul>
-
-                    <Button
-                      onClick={logout}
-                      className="h-12 w-full rounded-lg bg-emerald-950 text-white hover:bg-emerald-900"
-                    >
-                      <LogOut className="mr-2 h-4 w-4" /> Log out
-                    </Button>
-                  </>
+                {token ? (
+                  <Button
+                    onClick={logout}
+                    className="h-12 w-full rounded-lg bg-emerald-950 text-white hover:bg-emerald-900"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" /> Log out
+                  </Button>
                 ) : (
-                  <>
-                    <ul className="space-y-1">
-                      <li>
-                        <SheetClose asChild>
-                          <NavLink
-                            to={contactLink.to}
-                            className={mobileLinkClass}
-                          >
-                            {contactLink.label}
-                          </NavLink>
-                        </SheetClose>
-                      </li>
-                    </ul>
-
-                    <div className="space-y-3">
-                      <SheetClose asChild>
-                        <Button
-                          asChild
-                          variant="outline"
-                          className="h-12 w-full rounded-lg border-stone-300 bg-white"
-                        >
-                          <Link to="/login">Login</Link>
-                        </Button>
-                      </SheetClose>
-                      <SheetClose asChild>
-                        <Button
-                          asChild
-                          className="h-12 w-full rounded-lg bg-emerald-950 text-white hover:bg-emerald-900"
-                        >
-                          <Link to="/register">Register</Link>
-                        </Button>
-                      </SheetClose>
-                    </div>
-                  </>
+                  <div className="space-y-3">
+                    <SheetClose asChild>
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="h-12 w-full rounded-lg border-stone-300 bg-white"
+                      >
+                        <Link to="/login">Login</Link>
+                      </Button>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Button
+                        asChild
+                        className="h-12 w-full rounded-lg bg-emerald-950 text-white hover:bg-emerald-900"
+                      >
+                        <Link to="/register" className="text-rose-300">
+                          Register
+                        </Link>
+                      </Button>
+                    </SheetClose>
+                  </div>
                 )}
               </div>
             </SheetContent>

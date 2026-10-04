@@ -2,8 +2,7 @@ import React, { useContext, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import { useNavigate } from "react-router";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 import { TokenContext } from "../../../app/Context/TokenContext";
@@ -11,17 +10,21 @@ import { TokenContext } from "../../../app/Context/TokenContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import AuthHeader from "../AuthLayout/AuthHeader";
-import { Checkbox } from "../../../../src/components/ui/checkbox";
 
 export default function Login() {
-  let { token, setToken } = useContext(TokenContext);
+  let { setToken } = useContext(TokenContext);
 
   const [userMessage, setUseressage] = useState(null);
   const [errmessage, setErrmessage] = useState(null);
   const [isloading, setIsloading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   let navigate = useNavigate();
+
+  // الصفحة اللي اليوزر كان رايحلها قبل ما يتحوّل للـ login
+  const location = useLocation();
+  const from = location.state?.from || "/";
 
   let mySchema = Yup.object({
     email: Yup.string().required("email is required").email("not valid email"),
@@ -43,6 +46,7 @@ export default function Login() {
 
   async function loginFrom(values) {
     setIsloading(true);
+    setErrmessage(null);
     return await axios
       .post("https://ecommerce.routemisr.com/api/v1/auth/signin", values)
       .then((data) => {
@@ -51,10 +55,10 @@ export default function Login() {
         setUseressage(data.data.message);
 
         setIsloading(false);
-        navigate("/");
+        navigate(from, { replace: true });
       })
       .catch((err) => {
-        setErrmessage(err.response.data.message);
+        setErrmessage(err.response?.data?.message || "Something went wrong");
         setIsloading(false);
       });
   }
@@ -118,7 +122,7 @@ export default function Login() {
           <div className="flex justify-end">
             <Link
               to="/forgotpassword"
-              className="text-xs font-semibold text-green-400 hover:underline"
+              className="text-xs font-semibold text-rose-400 hover:underline"
             >
               Forgot password?
             </Link>
@@ -157,7 +161,10 @@ export default function Login() {
         {/* Remember me */}
         <div className="flex items-center gap-3">
           <Checkbox id="remember" />
-          <Label htmlFor="remember" className="cursor-pointer text-base font-normal text-slate-600">
+          <Label
+            htmlFor="remember"
+            className="cursor-pointer text-base font-normal text-slate-600"
+          >
             Remember me
           </Label>
         </div>
@@ -184,10 +191,32 @@ export default function Login() {
           <div className="h-px flex-1 bg-stone-300" />
         </div>
 
+        {/* Social buttons (UI فقط) */}
+        <div className="grid grid-cols-2 gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            className="h-14 rounded-lg border-stone-300 bg-white text-base font-medium"
+          >
+            <span className="mr-2 font-serif text-lg font-bold">G</span> Google
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="h-14 rounded-lg border-stone-300 bg-white text-base font-medium"
+          >
+            <span className="mr-2 inline-block h-2.5 w-2.5 rounded-full bg-black" />
+            Apple
+          </Button>
+        </div>
 
         <p className="pt-2 text-center text-slate-600">
           New to the boutique?{" "}
-          <Link to="/register" className="font-semibold text-green-400 hover:underline">
+          <Link
+            to="/register"
+            state={location.state}
+            className="font-semibold text-rose-400 hover:underline"
+          >
             Create an account
           </Link>
         </p>

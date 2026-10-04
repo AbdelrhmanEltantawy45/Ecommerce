@@ -1,15 +1,17 @@
-import { Navigate } from "react-router";
-
+import { Navigate, useLocation } from "react-router-dom";
 
 export default function ProtectedRoutes(props) {
+  const location = useLocation();
 
-
-  if(localStorage.getItem("userToken")){
+  if (localStorage.getItem("userToken")) {
     return props.children;
-  }else{
-    return <Navigate to="/login" ></Navigate>
   }
 
-
-
+  return (
+    <Navigate
+      to="/login"
+      replace
+      state={{ from: location.pathname + location.search }}
+    />
+  );
 }

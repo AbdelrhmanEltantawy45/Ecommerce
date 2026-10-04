@@ -2,9 +2,18 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { Heart, ShoppingBag, Star, ChevronRight, Loader2, Check } from "lucide-react";
+import {
+  Check,
+  ChevronRight,
+  Heart,
+  Loader2,
+  ShoppingBag,
+  Star,
+} from "lucide-react";
 
 import { CartContext } from "../../app/Context/Cartcontext";
+import useRequireAuth from "@/hooks/useRequireAuth";
+import ProductReviews from "./ProductReviews";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,33 +26,26 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import ProductReviews from "./ProductReviews";
+
 
 export default function ProductDetails() {
   let { id, category } = useParams();
 
-let {
-  addToCart,
-  removeCartItem,
-  cartProductIds = [],
-  addToWishList,
-  removeWishList,
-  wishListIds = [],
-} = useContext(CartContext);
+  let {
+    addToCart,
+    removeCartItem,
+    cartProductIds = [],
+    addToWishList,
+    removeWishList,
+    wishListIds = [],
+  } = useContext(CartContext);
 
-const [pendingCartId, setPendingCartId] = useState(null);
+  const requireAuth = useRequireAuth();
 
-async function toggleCart(productId) {
-  setPendingCartId(productId);
-  if (cartProductIds.includes(productId)) {
-    await removeCartItem(productId);
-  } else {
-    await addToCart(productId);
-  }
-  setPendingCartId(null);
-}
+  const [pendingCartId, setPendingCartId] = useState(null);
 
   async function toggleWishList(productId) {
+    if (!requireAuth()) return;
     if (wishListIds.includes(productId)) {
       await removeWishList(productId);
     } else {
@@ -51,9 +53,15 @@ async function toggleCart(productId) {
     }
   }
 
-  async function addProductToCart(productId) {
-    let response = await addToCart(productId);
-    console.log(response);
+  async function toggleCart(productId) {
+    if (!requireAuth()) return;
+    setPendingCartId(productId);
+    if (cartProductIds.includes(productId)) {
+      await removeCartItem(productId);
+    } else {
+      await addToCart(productId);
+    }
+    setPendingCartId(null);
   }
 
   const [productDetailes, setProductDetailes] = useState({});
@@ -61,11 +69,10 @@ async function toggleCart(productId) {
   const [errorMessage, setErrorMessage] = useState(null);
   const [relatedProduct, setRelatedProduct] = useState([]);
 
-  
+
   const [api, setApi] = useState(null);
   const [current, setCurrent] = useState(0);
 
-  
 
   useEffect(() => {
     if (!api) return;
@@ -112,6 +119,8 @@ async function toggleCart(productId) {
   }, [id]);
 
   const isInWishList = wishListIds.includes(productDetailes?._id);
+  const isInCart = cartProductIds.includes(productDetailes?._id);
+  const isMainPending = pendingCartId === productDetailes?._id;
 
   return (
     <main className="min-h-screen bg-[#f6ede4] pt-16">
@@ -207,7 +216,7 @@ async function toggleCart(productId) {
                 {productDetailes.category?.name}
               </Badge>
 
-              <h1 className="mt-4  text-3xl font-bold leading-tight text-emerald-950 md:text-4xl">
+              <h1 className="mt-4 text-3xl font-bold leading-tight text-emerald-950 md:text-4xl">
                 {productDetailes.title}
               </h1>
 
@@ -241,31 +250,33 @@ async function toggleCart(productId) {
               </div>
 
               <div className="mt-6 flex gap-3">
-             <Button
-  onClick={() => toggleCart(productDetailes._id)}
-  disabled={pendingCartId === productDetailes._id}
-  aria-pressed={cartProductIds.includes(productDetailes._id)}
-  className={`h-14 flex-1 gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-semibold transition-colors sm:text-base ${
-    cartProductIds.includes(productDetailes._id)
-      ? "border border-rose-300 bg-rose-50 text-rose-500 hover:bg-rose-100"
-      : "bg-emerald-950 text-white hover:bg-emerald-900"
-  }`}
->
-  {pendingCartId === productDetailes._id ? (
-    <Loader2 className="h-5 w-5 animate-spin" />
-  ) : cartProductIds.includes(productDetailes._id) ? (
-    <>
-      <Check className="h-5 w-5 shrink-0" />
-      <span className="truncate">Remove from cart</span>
-    </>
-  ) : (
-    <>
-      <ShoppingBag className="h-5 w-5 shrink-0" />
-      <span className="truncate">Add to cart</span>
-    </>
-  )}
-</Button>
+                {/* Add / Remove from cart */}
+                <Button
+                  onClick={() => toggleCart(productDetailes._id)}
+                  disabled={isMainPending}
+                  aria-pressed={isInCart}
+                  className={`h-14 flex-1 gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-semibold transition-colors sm:text-base ${
+                    isInCart
+                      ? "border border-rose-300 bg-rose-50 text-rose-500 hover:bg-rose-100"
+                      : "bg-emerald-950 text-white hover:bg-emerald-900"
+                  }`}
+                >
+                  {isMainPending ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : isInCart ? (
+                    <>
+                      <Check className="h-5 w-5 shrink-0" />
+                      <span className="truncate">Remove from cart</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingBag className="h-5 w-5 shrink-0" />
+                      <span className="truncate">Add to cart</span>
+                    </>
+                  )}
+                </Button>
 
+                {/* Wishlist */}
                 <Button
                   type="button"
                   variant="outline"
@@ -289,7 +300,7 @@ async function toggleCart(productId) {
           </div>
         )}
 
-              {/* Reviews */}
+        {/* Reviews */}
         {!isloading && productDetailes?._id && (
           <ProductReviews productId={productDetailes._id} />
         )}
@@ -301,7 +312,7 @@ async function toggleCart(productId) {
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-400">
                 You may also like
               </p>
-              <h2 className=" text-2xl font-bold text-emerald-950 md:text-3xl">
+              <h2 className="text-2xl font-bold text-emerald-950 md:text-3xl">
                 Related products
               </h2>
             </div>
@@ -311,6 +322,8 @@ async function toggleCart(productId) {
                 .filter((product) => product._id !== productDetailes._id)
                 .map((product) => {
                   const inWishList = wishListIds.includes(product._id);
+                  const inCart = cartProductIds.includes(product._id);
+                  const isPending = pendingCartId === product._id;
 
                   return (
                     <div
@@ -359,7 +372,7 @@ async function toggleCart(productId) {
                           <p className="text-xs font-semibold uppercase tracking-wide text-rose-400">
                             {product.category.name}
                           </p>
-                          <h3 className="mt-1 line-clamp-1 font-serif text-base font-bold text-emerald-950">
+                          <h3 className="mt-1 line-clamp-1 text-base font-bold text-emerald-950">
                             {product.title.split(" ").slice(0, 2).join(" ")}
                           </h3>
 
@@ -374,35 +387,39 @@ async function toggleCart(productId) {
                           </div>
                         </Link>
 
-                      <Button
-  onClick={() => toggleCart(product._id)}
-  disabled={pendingCartId === product._id}
-  aria-pressed={cartProductIds.includes(product._id)}
-  aria-label={
-    cartProductIds.includes(product._id) ? "Remove from cart" : "Add to cart"
-  }
-  className={`mt-4 h-10 w-full gap-1.5 whitespace-nowrap rounded-lg px-2 text-xs font-semibold transition-colors sm:h-11 sm:gap-2 sm:px-4 sm:text-sm ${
-    cartProductIds.includes(product._id)
-      ? "border border-rose-300 bg-rose-50 text-rose-500 hover:bg-rose-100"
-      : "bg-emerald-950 text-white hover:bg-emerald-900"
-  }`}
->
-  {pendingCartId === product._id ? (
-    <Loader2 className="h-4 w-4 animate-spin" />
-  ) : cartProductIds.includes(product._id) ? (
-    <>
-      <Check className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
-      <span className="truncate sm:hidden">Remove</span>
-      <span className="hidden truncate sm:inline">Remove from cart</span>
-    </>
-  ) : (
-    <>
-      <ShoppingBag className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
-      <span className="truncate sm:hidden">Add</span>
-      <span className="hidden truncate sm:inline">Add to cart</span>
-    </>
-  )}
-</Button>
+                        <Button
+                          onClick={() => toggleCart(product._id)}
+                          disabled={isPending}
+                          aria-pressed={inCart}
+                          aria-label={
+                            inCart ? "Remove from cart" : "Add to cart"
+                          }
+                          className={`mt-4 h-10 w-full gap-1.5 whitespace-nowrap rounded-lg px-2 text-xs font-semibold transition-colors sm:h-11 sm:gap-2 sm:px-4 sm:text-sm ${
+                            inCart
+                              ? "border border-rose-300 bg-rose-50 text-rose-500 hover:bg-rose-100"
+                              : "bg-emerald-950 text-white hover:bg-emerald-900"
+                          }`}
+                        >
+                          {isPending ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : inCart ? (
+                            <>
+                              <Check className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+                              <span className="truncate sm:hidden">Remove</span>
+                              <span className="hidden truncate sm:inline">
+                                Remove from cart
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <ShoppingBag className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+                              <span className="truncate sm:hidden">Add</span>
+                              <span className="hidden truncate sm:inline">
+                                Add to cart
+                              </span>
+                            </>
+                          )}
+                        </Button>
                       </div>
                     </div>
                   );
