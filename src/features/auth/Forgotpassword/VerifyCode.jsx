@@ -32,6 +32,9 @@ export default function VerifyCode() {
   let navigate = useNavigate();
   const otpRef = useRef(null);
 
+  const MIN_LENGTH = 4;
+const MAX_LENGTH = 8;
+
   let mySchema = Yup.object({
     resetCode: Yup.string()
       .required("code is required")
@@ -67,13 +70,13 @@ export default function VerifyCode() {
       .catch((err) => {
         setErrmessage(err.response?.data?.message || "Invalid or expired code");
         setIsloading(false);
-        // نفضّي الخانات ونرجّع الفوكس علشان يكتب الكود تاني
+      
         formik.resetForm();
         setTimeout(() => otpRef.current?.focus(), 0);
       });
   }
 
-  // عدّاد إعادة الإرسال
+
   useEffect(() => {
     if (countdown <= 0) return;
     const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
