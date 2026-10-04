@@ -94,7 +94,7 @@ export default function BrandDetails() {
                   asChild
                   className="h-12 rounded-lg bg-emerald-950 px-6 font-semibold text-white hover:bg-emerald-900"
                 >
-                  <Link to="/product"  >Shop the collection</Link>
+                  <Link to="/product" className="text-white"  >Shop the collection</Link>
                 </Button>
 
                 <Button
