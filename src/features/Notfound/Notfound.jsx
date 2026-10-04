@@ -18,11 +18,11 @@ export default function Notfound() {
             Error 404
           </p>
 
-          <h1 className="font-serif text-7xl font-bold leading-none text-emerald-950 md:text-9xl">
+          <h1 className=" text-7xl font-bold leading-none text-emerald-950 md:text-9xl">
             404
           </h1>
 
-          <h2 className="mt-6 font-serif text-2xl font-bold text-emerald-950 md:text-4xl">
+          <h2 className="mt-6 text-2xl font-bold text-emerald-950 md:text-4xl">
             This page has gone missing
           </h2>
 

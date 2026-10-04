@@ -75,7 +75,7 @@ export default function CategoriesDetails() {
                 Category
               </Badge>
 
-              <h1 className="mt-4 font-serif text-4xl font-bold leading-tight text-emerald-950 md:text-5xl">
+              <h1 className="mt-4 text-4xl font-bold leading-tight text-emerald-950 md:text-5xl">
                 {catDetails?.name}
               </h1>
 

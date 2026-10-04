@@ -9,7 +9,7 @@ export default function Products() {
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-400">
           Our collection
         </p>
-        <h1 className="font-serif text-3xl font-bold text-emerald-950 md:text-5xl">
+        <h1 className=" text-3xl font-bold text-emerald-950 md:text-5xl">
           All products
         </h1>
         <p className="mt-3 max-w-xl text-slate-600">

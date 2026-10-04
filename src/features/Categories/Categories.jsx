@@ -31,7 +31,7 @@ export default function Categories() {
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-400">
             Browse
           </p>
-          <h1 className="font-serif text-3xl font-bold text-emerald-950 md:text-5xl">
+          <h1 className="text-3xl font-bold text-emerald-950 md:text-5xl">
             All categories
           </h1>
           <p className="mt-3 max-w-xl text-slate-600">
@@ -69,7 +69,7 @@ export default function Categories() {
                       <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-rose-200">
                         Category
                       </p>
-                      <h3 className="font-serif text-2xl font-bold leading-tight">
+                      <h3 className="text-2xl font-bold leading-tight">
                         {cat.name}
                       </h3>
                     </div>

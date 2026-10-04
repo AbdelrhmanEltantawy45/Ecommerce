@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { Heart, ShoppingBag, Star, ChevronRight } from "lucide-react";
+import { Heart, ShoppingBag, Star, ChevronRight, Loader2, Check } from "lucide-react";
 
 import { CartContext } from "../../app/Context/Cartcontext";
 
@@ -22,12 +22,26 @@ import ProductReviews from "./ProductReviews";
 export default function ProductDetails() {
   let { id, category } = useParams();
 
-  let {
-    addToCart,
-    addToWishList,
-    removeWishList,
-    wishListIds = [],
-  } = useContext(CartContext);
+let {
+  addToCart,
+  removeCartItem,
+  cartProductIds = [],
+  addToWishList,
+  removeWishList,
+  wishListIds = [],
+} = useContext(CartContext);
+
+const [pendingCartId, setPendingCartId] = useState(null);
+
+async function toggleCart(productId) {
+  setPendingCartId(productId);
+  if (cartProductIds.includes(productId)) {
+    await removeCartItem(productId);
+  } else {
+    await addToCart(productId);
+  }
+  setPendingCartId(null);
+}
 
   async function toggleWishList(productId) {
     if (wishListIds.includes(productId)) {
@@ -50,6 +64,8 @@ export default function ProductDetails() {
   
   const [api, setApi] = useState(null);
   const [current, setCurrent] = useState(0);
+
+  
 
   useEffect(() => {
     if (!api) return;
@@ -191,7 +207,7 @@ export default function ProductDetails() {
                 {productDetailes.category?.name}
               </Badge>
 
-              <h1 className="mt-4 font-serif text-3xl font-bold leading-tight text-emerald-950 md:text-4xl">
+              <h1 className="mt-4  text-3xl font-bold leading-tight text-emerald-950 md:text-4xl">
                 {productDetailes.title}
               </h1>
 
@@ -215,7 +231,7 @@ export default function ProductDetails() {
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                     Price
                   </p>
-                  <p className="font-serif text-3xl font-bold text-emerald-950">
+                  <p className="text-3xl font-bold text-emerald-950">
                     {productDetailes.price}{" "}
                     <span className="text-base font-semibold text-slate-600">
                       EGP
@@ -225,12 +241,30 @@ export default function ProductDetails() {
               </div>
 
               <div className="mt-6 flex gap-3">
-                <Button
-                  onClick={() => addProductToCart(productDetailes._id)}
-                  className="h-14 flex-1 rounded-lg bg-emerald-950 text-base font-semibold text-white hover:bg-emerald-900"
-                >
-                  <ShoppingBag className="mr-2 h-5 w-5" /> Add to cart
-                </Button>
+             <Button
+  onClick={() => toggleCart(productDetailes._id)}
+  disabled={pendingCartId === productDetailes._id}
+  aria-pressed={cartProductIds.includes(productDetailes._id)}
+  className={`h-14 flex-1 gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-semibold transition-colors sm:text-base ${
+    cartProductIds.includes(productDetailes._id)
+      ? "border border-rose-300 bg-rose-50 text-rose-500 hover:bg-rose-100"
+      : "bg-emerald-950 text-white hover:bg-emerald-900"
+  }`}
+>
+  {pendingCartId === productDetailes._id ? (
+    <Loader2 className="h-5 w-5 animate-spin" />
+  ) : cartProductIds.includes(productDetailes._id) ? (
+    <>
+      <Check className="h-5 w-5 shrink-0" />
+      <span className="truncate">Remove from cart</span>
+    </>
+  ) : (
+    <>
+      <ShoppingBag className="h-5 w-5 shrink-0" />
+      <span className="truncate">Add to cart</span>
+    </>
+  )}
+</Button>
 
                 <Button
                   type="button"
@@ -267,7 +301,7 @@ export default function ProductDetails() {
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-400">
                 You may also like
               </p>
-              <h2 className="font-serif text-2xl font-bold text-emerald-950 md:text-3xl">
+              <h2 className=" text-2xl font-bold text-emerald-950 md:text-3xl">
                 Related products
               </h2>
             </div>
@@ -340,12 +374,35 @@ export default function ProductDetails() {
                           </div>
                         </Link>
 
-                        <Button
-                          onClick={() => addProductToCart(product._id)}
-                          className="mt-4 h-11 w-full rounded-lg bg-emerald-950 text-sm font-semibold text-white hover:bg-emerald-900"
-                        >
-                          <ShoppingBag className="mr-2 h-4 w-4" /> Add to cart
-                        </Button>
+                      <Button
+  onClick={() => toggleCart(product._id)}
+  disabled={pendingCartId === product._id}
+  aria-pressed={cartProductIds.includes(product._id)}
+  aria-label={
+    cartProductIds.includes(product._id) ? "Remove from cart" : "Add to cart"
+  }
+  className={`mt-4 h-10 w-full gap-1.5 whitespace-nowrap rounded-lg px-2 text-xs font-semibold transition-colors sm:h-11 sm:gap-2 sm:px-4 sm:text-sm ${
+    cartProductIds.includes(product._id)
+      ? "border border-rose-300 bg-rose-50 text-rose-500 hover:bg-rose-100"
+      : "bg-emerald-950 text-white hover:bg-emerald-900"
+  }`}
+>
+  {pendingCartId === product._id ? (
+    <Loader2 className="h-4 w-4 animate-spin" />
+  ) : cartProductIds.includes(product._id) ? (
+    <>
+      <Check className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+      <span className="truncate sm:hidden">Remove</span>
+      <span className="hidden truncate sm:inline">Remove from cart</span>
+    </>
+  ) : (
+    <>
+      <ShoppingBag className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+      <span className="truncate sm:hidden">Add</span>
+      <span className="hidden truncate sm:inline">Add to cart</span>
+    </>
+  )}
+</Button>
                       </div>
                     </div>
                   );

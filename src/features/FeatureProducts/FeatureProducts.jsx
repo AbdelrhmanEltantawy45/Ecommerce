@@ -59,7 +59,7 @@ export default function FeatureProducts({ showHeading = true }) {
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-400">
             The signature collection
           </p>
-          <h2 className="font-serif text-2xl font-bold text-emerald-950 md:text-3xl">
+          <h2 className="text-2xl font-bold text-emerald-950 md:text-3xl">
             Objects of permanence, chosen
           </h2>
         </div>
@@ -137,7 +137,7 @@ export default function FeatureProducts({ showHeading = true }) {
                     <p className="text-xs font-semibold uppercase tracking-wide text-rose-400">
                       {product.category.name}
                     </p>
-                    <h3 className="mt-1 line-clamp-1 font-serif text-base font-bold text-emerald-950">
+                    <h3 className="mt-1 line-clamp-1 text-base font-bold text-emerald-950">
                       {product.title.split(" ").slice(0, 2).join(" ")}
                     </h3>
 

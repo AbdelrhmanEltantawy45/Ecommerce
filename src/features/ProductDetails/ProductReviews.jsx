@@ -214,7 +214,7 @@ export default function ProductReviews({ productId }) {
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-400">
           Customer feedback
         </p>
-        <h2 className="font-serif text-2xl font-bold text-emerald-950 md:text-3xl">
+        <h2 className=" text-2xl font-bold text-emerald-950 md:text-3xl">
           Reviews
         </h2>
       </div>
@@ -233,7 +233,7 @@ export default function ProductReviews({ productId }) {
             ) : (
               <>
                 <div className="flex items-center gap-4">
-                  <p className="font-serif text-5xl font-bold text-emerald-950">
+                  <p className=" text-5xl font-bold text-emerald-950">
                     {summary.avg.toFixed(1)}
                   </p>
                   <div>
@@ -277,7 +277,7 @@ export default function ProductReviews({ productId }) {
           {/* Form / prompts */}
           {!token ? (
             <div className="rounded-3xl border border-stone-200 bg-white p-6 text-center shadow-sm">
-              <p className="font-serif text-lg font-bold text-emerald-950">
+              <p className=" text-lg font-bold text-emerald-950">
                 Share your thoughts
               </p>
               <p className="mt-1 text-sm text-slate-600">
@@ -297,7 +297,7 @@ export default function ProductReviews({ productId }) {
               className="space-y-4 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
             >
               <div className="flex items-start justify-between">
-                <h3 className="font-serif text-lg font-bold text-emerald-950">
+                <h3 className=" text-lg font-bold text-emerald-950">
                   {editingId ? "Edit your review" : "Write a review"}
                 </h3>
                 {editingId && (
@@ -352,7 +352,7 @@ export default function ProductReviews({ productId }) {
             </form>
           ) : (
             <div className="rounded-3xl border border-stone-200 bg-white p-6 text-center shadow-sm">
-              <p className="font-serif text-lg font-bold text-emerald-950">
+              <p className=" text-lg font-bold text-emerald-950">
                 Thanks for reviewing!
               </p>
               <p className="mt-1 text-sm text-slate-600">
@@ -374,7 +374,7 @@ export default function ProductReviews({ productId }) {
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#f6ede4] text-emerald-950">
                 <Star className="h-6 w-6" />
               </div>
-              <h3 className="mt-4 font-serif text-xl font-bold text-emerald-950">
+              <h3 className="mt-4 text-xl font-bold text-emerald-950">
                 No reviews yet
               </h3>
               <p className="mt-1 max-w-xs text-sm text-slate-600">
@@ -456,7 +456,7 @@ export default function ProductReviews({ productId }) {
       >
         <AlertDialogContent className="rounded-2xl bg-[#fbf8f3]">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-serif text-emerald-950">
+            <AlertDialogTitle className=" text-emerald-950">
               Delete your review?
             </AlertDialogTitle>
             <AlertDialogDescription>

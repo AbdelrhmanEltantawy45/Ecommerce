@@ -34,7 +34,7 @@ export default function CatSlider() {
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-400">
             Browse
           </p>
-          <h2 className="font-serif text-2xl font-bold text-emerald-950 md:text-3xl">
+          <h2 className="text-2xl font-bold text-emerald-950 md:text-3xl">
             Shop by category
           </h2>
         </div>

@@ -93,7 +93,7 @@ export default function MainSlider() {
         {/* Content card */}
         <div className="pointer-events-none absolute inset-x-4 bottom-4 sm:inset-x-auto sm:bottom-8 sm:left-8 lg:bottom-10 lg:left-10">
           <div className="pointer-events-auto max-w-sm rounded-xl bg-white p-5 shadow-lg sm:p-7">
-            <h2 className="font-serif text-xl font-bold leading-snug text-emerald-950 sm:text-2xl">
+            <h2 className="text-xl font-bold leading-snug text-emerald-950 sm:text-2xl">
               {slide.title}
             </h2>
             <p className="mt-2 text-sm text-slate-600">{slide.text}</p>
