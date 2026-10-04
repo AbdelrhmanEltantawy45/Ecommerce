@@ -12,5 +12,8 @@ export default {
   plugins: [
     flowbite.plugin(),
   ],
+  fontFamily: {
+  serif: ['"Libre Baskerville"', "Georgia", "serif"],
+},
 }
 
