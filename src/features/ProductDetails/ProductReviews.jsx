@@ -21,13 +21,14 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const BASE_URL = "https://ecommerce.routemisr.com/api/v1";
+const PAGE_SIZE = 4; // عدد الريفيوهات اللي بتظهر في كل مرة
 
 const getHeaders = () => ({
   token: localStorage.getItem("userToken"),
   "Content-Type": "application/json",
 });
 
-
+// بيفك الـ JWT ويرجّع الـ id بتاع اليوزر
 function getUserIdFromToken() {
   try {
     const token = localStorage.getItem("userToken");
@@ -45,6 +46,8 @@ function formatDate(date) {
     year: "numeric",
   });
 }
+
+/* نجوم للعرض فقط */
 function StarsDisplay({ value = 0, size = "h-4 w-4" }) {
   return (
     <div className="flex items-center gap-0.5">
@@ -62,7 +65,7 @@ function StarsDisplay({ value = 0, size = "h-4 w-4" }) {
   );
 }
 
-
+/* نجوم قابلة للضغط */
 function StarsInput({ value, onChange }) {
   const [hover, setHover] = useState(0);
 
@@ -99,6 +102,7 @@ export default function ProductReviews({ productId }) {
   const [text, setText] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const token = localStorage.getItem("userToken");
   const userId = getUserIdFromToken();
@@ -122,6 +126,7 @@ export default function ProductReviews({ productId }) {
 
   useEffect(() => {
     setIsLoading(true);
+    setVisibleCount(PAGE_SIZE);
     resetForm();
     getReviews();
   }, [productId]);
@@ -132,13 +137,13 @@ export default function ProductReviews({ productId }) {
     setEditingId(null);
   }
 
- 
+  // ريفيو اليوزر الحالي (لو موجود)
   const myReview = useMemo(
     () => reviews.find((r) => (r.user?._id ?? r.user) === userId),
     [reviews, userId]
   );
 
-
+  // ملخص التقييمات
   const summary = useMemo(() => {
     const total = reviews.length;
     const avg = total
@@ -208,13 +213,18 @@ export default function ProductReviews({ productId }) {
 
   const showForm = token && (!myReview || editingId);
 
+  // الريفيوهات الظاهرة + حالة الأزرار
+  const visibleReviews = reviews.slice(0, visibleCount);
+  const hasMore = visibleCount < reviews.length;
+  const canCollapse = visibleCount > PAGE_SIZE;
+
   return (
     <section className="mt-16">
       <div className="mb-8">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-400">
           Customer feedback
         </p>
-        <h2 className=" text-2xl font-bold text-emerald-950 md:text-3xl">
+        <h2 className="text-2xl font-bold text-emerald-950 md:text-3xl">
           Reviews
         </h2>
       </div>
@@ -233,7 +243,7 @@ export default function ProductReviews({ productId }) {
             ) : (
               <>
                 <div className="flex items-center gap-4">
-                  <p className=" text-5xl font-bold text-emerald-950">
+                  <p className="text-5xl font-bold text-emerald-950">
                     {summary.avg.toFixed(1)}
                   </p>
                   <div>
@@ -277,7 +287,7 @@ export default function ProductReviews({ productId }) {
           {/* Form / prompts */}
           {!token ? (
             <div className="rounded-3xl border border-stone-200 bg-white p-6 text-center shadow-sm">
-              <p className=" text-lg font-bold text-emerald-950">
+              <p className="text-lg font-bold text-emerald-950">
                 Share your thoughts
               </p>
               <p className="mt-1 text-sm text-slate-600">
@@ -297,7 +307,7 @@ export default function ProductReviews({ productId }) {
               className="space-y-4 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm"
             >
               <div className="flex items-start justify-between">
-                <h3 className=" text-lg font-bold text-emerald-950">
+                <h3 className="text-lg font-bold text-emerald-950">
                   {editingId ? "Edit your review" : "Write a review"}
                 </h3>
                 {editingId && (
@@ -352,7 +362,7 @@ export default function ProductReviews({ productId }) {
             </form>
           ) : (
             <div className="rounded-3xl border border-stone-200 bg-white p-6 text-center shadow-sm">
-              <p className=" text-lg font-bold text-emerald-950">
+              <p className="text-lg font-bold text-emerald-950">
                 Thanks for reviewing!
               </p>
               <p className="mt-1 text-sm text-slate-600">
@@ -382,69 +392,101 @@ export default function ProductReviews({ productId }) {
               </p>
             </div>
           ) : (
-            reviews.map((r) => {
-              const isMine = (r.user?._id ?? r.user) === userId;
-              const name = r.user?.name ?? "Customer";
+            <>
+              {visibleReviews.map((r) => {
+                const isMine = (r.user?._id ?? r.user) === userId;
+                const name = r.user?.name ?? "Customer";
 
-              return (
-                <article
-                  key={r._id}
-                  className="rounded-3xl border border-stone-200 bg-white p-5 shadow-sm md:p-6"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarFallback className="bg-emerald-950 text-sm font-semibold uppercase text-white">
-                          {name.slice(0, 1)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="text-sm font-semibold text-emerald-950">
-                          {name}
-                          {isMine && (
-                            <span className="ml-2 rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-rose-500">
-                              You
-                            </span>
-                          )}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          {formatDate(r.createdAt)}
-                        </p>
+                return (
+                  <article
+                    key={r._id}
+                    className="rounded-3xl border border-stone-200 bg-white p-5 shadow-sm md:p-6"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarFallback className="bg-emerald-950 text-sm font-semibold uppercase text-white">
+                            {name.slice(0, 1)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm font-semibold text-emerald-950">
+                            {name}
+                            {isMine && (
+                              <span className="ml-2 rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-rose-500">
+                                You
+                              </span>
+                            )}
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            {formatDate(r.createdAt)}
+                          </p>
+                        </div>
                       </div>
+
+                      <StarsDisplay value={r.rating} />
                     </div>
 
-                    <StarsDisplay value={r.rating} />
-                  </div>
+                    <p className="mt-4 leading-relaxed text-slate-600">
+                      {r.review}
+                    </p>
 
-                  <p className="mt-4 leading-relaxed text-slate-600">
-                    {r.review}
-                  </p>
+                    {isMine && (
+                      <div className="mt-4 flex gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => startEdit(r)}
+                          className="rounded-lg border-stone-300 bg-white text-slate-700 hover:bg-[#fbf8f3]"
+                        >
+                          <Pencil className="mr-1.5 h-3.5 w-3.5" /> Edit
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setDeleteId(r._id)}
+                          className="rounded-lg border-red-200 bg-white text-red-600 hover:bg-red-50 hover:text-red-700"
+                        >
+                          <Trash2 className="mr-1.5 h-3.5 w-3.5" /> Delete
+                        </Button>
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
 
-                  {isMine && (
-                    <div className="mt-4 flex gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => startEdit(r)}
-                        className="rounded-lg border-stone-300 bg-white text-slate-700 hover:bg-[#fbf8f3]"
-                      >
-                        <Pencil className="mr-1.5 h-3.5 w-3.5" /> Edit
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setDeleteId(r._id)}
-                        className="rounded-lg border-red-200 bg-white text-red-600 hover:bg-red-50 hover:text-red-700"
-                      >
-                        <Trash2 className="mr-1.5 h-3.5 w-3.5" /> Delete
-                      </Button>
-                    </div>
+              {/* Show more / Show less */}
+              {(hasMore || canCollapse) && (
+                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                  {hasMore && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                      className="h-11 rounded-lg border-stone-300 bg-white px-6 font-semibold text-emerald-950 hover:bg-[#fbf8f3]"
+                    >
+                      Show more
+                      <span className="ml-2 text-xs font-normal text-slate-500">
+                        ({reviews.length - visibleCount} left)
+                      </span>
+                    </Button>
                   )}
-                </article>
-              );
-            })
+
+                  {canCollapse && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => setVisibleCount(PAGE_SIZE)}
+                      className="h-11 rounded-lg px-6 font-semibold text-slate-600 hover:bg-[#f6ede4]"
+                    >
+                      Show less
+                    </Button>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -456,7 +498,7 @@ export default function ProductReviews({ productId }) {
       >
         <AlertDialogContent className="rounded-2xl bg-[#fbf8f3]">
           <AlertDialogHeader>
-            <AlertDialogTitle className=" text-emerald-950">
+            <AlertDialogTitle className="text-emerald-950">
               Delete your review?
             </AlertDialogTitle>
             <AlertDialogDescription>
