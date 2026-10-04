@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Loader2, Pencil, Star, Trash2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -21,14 +21,14 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const BASE_URL = "https://ecommerce.routemisr.com/api/v1";
-const PAGE_SIZE = 4; // عدد الريفيوهات اللي بتظهر في كل مرة
+const PAGE_SIZE = 4;
 
 const getHeaders = () => ({
   token: localStorage.getItem("userToken"),
   "Content-Type": "application/json",
 });
 
-// بيفك الـ JWT ويرجّع الـ id بتاع اليوزر
+
 function getUserIdFromToken() {
   try {
     const token = localStorage.getItem("userToken");
@@ -47,7 +47,7 @@ function formatDate(date) {
   });
 }
 
-/* نجوم للعرض فقط */
+
 function StarsDisplay({ value = 0, size = "h-4 w-4" }) {
   return (
     <div className="flex items-center gap-0.5">
@@ -65,7 +65,7 @@ function StarsDisplay({ value = 0, size = "h-4 w-4" }) {
   );
 }
 
-/* نجوم قابلة للضغط */
+
 function StarsInput({ value, onChange }) {
   const [hover, setHover] = useState(0);
 
@@ -94,6 +94,8 @@ function StarsInput({ value, onChange }) {
 }
 
 export default function ProductReviews({ productId }) {
+  const location = useLocation();
+
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -137,13 +139,13 @@ export default function ProductReviews({ productId }) {
     setEditingId(null);
   }
 
-  // ريفيو اليوزر الحالي (لو موجود)
+
   const myReview = useMemo(
     () => reviews.find((r) => (r.user?._id ?? r.user) === userId),
     [reviews, userId]
   );
 
-  // ملخص التقييمات
+
   const summary = useMemo(() => {
     const total = reviews.length;
     const avg = total
@@ -158,6 +160,7 @@ export default function ProductReviews({ productId }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (!token) return;
     if (!rating) return toast.error("Please select a rating");
     if (text.trim().length < 2) return toast.error("Please write a review");
 
@@ -213,7 +216,7 @@ export default function ProductReviews({ productId }) {
 
   const showForm = token && (!myReview || editingId);
 
-  // الريفيوهات الظاهرة + حالة الأزرار
+
   const visibleReviews = reviews.slice(0, visibleCount);
   const hasMore = visibleCount < reviews.length;
   const canCollapse = visibleCount > PAGE_SIZE;
@@ -297,7 +300,13 @@ export default function ProductReviews({ productId }) {
                 asChild
                 className="mt-4 h-11 rounded-lg bg-emerald-950 px-6 text-white hover:bg-emerald-900"
               >
-                <Link to="/login">Sign in</Link>
+                <Link
+                  to="/login"
+                  className="text-rose-300"
+                  state={{ from: location.pathname + location.search }}
+                >
+                  Sign in
+                </Link>
               </Button>
             </div>
           ) : showForm ? (
@@ -394,7 +403,7 @@ export default function ProductReviews({ productId }) {
           ) : (
             <>
               {visibleReviews.map((r) => {
-                const isMine = (r.user?._id ?? r.user) === userId;
+                const isMine = !!userId && (r.user?._id ?? r.user) === userId;
                 const name = r.user?.name ?? "Customer";
 
                 return (

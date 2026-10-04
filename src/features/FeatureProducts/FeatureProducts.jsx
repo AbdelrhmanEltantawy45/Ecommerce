@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Check, Heart, Loader2, ShoppingBag, Star } from "lucide-react";
 
 import { CartContext } from "../../app/Context/Cartcontext";
+import useRequireAuth from "@/hooks/useRequireAuth";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,9 +20,13 @@ export default function FeatureProducts({ showHeading = true }) {
     wishListIds = [],
   } = useContext(CartContext);
 
+  const requireAuth = useRequireAuth();
+
+  // ID المنتج اللي بيتعمله add/remove حاليا (علشان نعرض spinner على زراره بس)
   const [pendingCartId, setPendingCartId] = useState(null);
 
   async function toggleWishList(productId) {
+    if (!requireAuth()) return;
     if (wishListIds.includes(productId)) {
       await removeWishList(productId);
     } else {
@@ -30,6 +35,7 @@ export default function FeatureProducts({ showHeading = true }) {
   }
 
   async function toggleCart(productId) {
+    if (!requireAuth()) return;
     setPendingCartId(productId);
     if (cartProductIds.includes(productId)) {
       await removeCartItem(productId);
@@ -59,7 +65,7 @@ export default function FeatureProducts({ showHeading = true }) {
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-400">
             The signature collection
           </p>
-          <h2 className="text-2xl font-bold text-emerald-950 md:text-3xl">
+          <h2 className="font-serif text-2xl font-bold text-emerald-950 md:text-3xl">
             Objects of permanence, chosen
           </h2>
         </div>
@@ -137,7 +143,7 @@ export default function FeatureProducts({ showHeading = true }) {
                     <p className="text-xs font-semibold uppercase tracking-wide text-rose-400">
                       {product.category.name}
                     </p>
-                    <h3 className="mt-1 line-clamp-1 text-base font-bold text-emerald-950">
+                    <h3 className="mt-1 line-clamp-1 font-serif text-base font-bold text-emerald-950">
                       {product.title.split(" ").slice(0, 2).join(" ")}
                     </h3>
 
@@ -152,34 +158,38 @@ export default function FeatureProducts({ showHeading = true }) {
                     </div>
                   </Link>
 
-               {/* Add / Remove from cart */}
-<Button
-  onClick={() => toggleCart(product._id)}
-  disabled={isPending}
-  aria-pressed={isInCart}
-  aria-label={isInCart ? "Remove from cart" : "Add to cart"}
-  className={`mt-4 h-10 w-full gap-1.5 whitespace-nowrap rounded-lg px-2 text-xs font-semibold transition-colors sm:h-11 sm:gap-2 sm:px-4 sm:text-sm ${
-    isInCart
-      ? "border border-rose-300 bg-rose-50 text-rose-500 hover:bg-rose-100"
-      : "bg-emerald-950 text-white hover:bg-emerald-900"
-  }`}
->
-  {isPending ? (
-    <Loader2 className="h-4 w-4 animate-spin" />
-  ) : isInCart ? (
-    <>
-      <Check className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
-      <span className="truncate sm:hidden">Remove</span>
-      <span className="hidden truncate sm:inline">Remove from cart</span>
-    </>
-  ) : (
-    <>
-      <ShoppingBag className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
-      <span className="truncate sm:hidden">Add</span>
-      <span className="hidden truncate sm:inline">Add to cart</span>
-    </>
-  )}
-</Button>
+                  {/* Add / Remove from cart */}
+                  <Button
+                    onClick={() => toggleCart(product._id)}
+                    disabled={isPending}
+                    aria-pressed={isInCart}
+                    aria-label={isInCart ? "Remove from cart" : "Add to cart"}
+                    className={`mt-4 h-10 w-full gap-1.5 whitespace-nowrap rounded-lg px-2 text-xs font-semibold transition-colors sm:h-11 sm:gap-2 sm:px-4 sm:text-sm ${
+                      isInCart
+                        ? "border border-rose-300 bg-rose-50 text-rose-500 hover:bg-rose-100"
+                        : "bg-emerald-950 text-white hover:bg-emerald-900"
+                    }`}
+                  >
+                    {isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : isInCart ? (
+                      <>
+                        <Check className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+                        <span className="truncate sm:hidden">Remove</span>
+                        <span className="hidden truncate sm:inline">
+                          Remove from cart
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingBag className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+                        <span className="truncate sm:hidden">Add</span>
+                        <span className="hidden truncate sm:inline">
+                          Add to cart
+                        </span>
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
             );
