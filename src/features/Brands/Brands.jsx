@@ -31,7 +31,7 @@ export default function Brands() {
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-400">
             The houses we carry
           </p>
-          <h1 className="font-serif text-3xl font-bold text-emerald-950 md:text-5xl">
+          <h1 className="text-3xl font-bold text-emerald-950 md:text-5xl">
             All brands
           </h1>
           <p className="mt-3 max-w-xl text-slate-600">
@@ -63,7 +63,7 @@ export default function Brands() {
                   </div>
 
                   <div className="flex items-center justify-between border-t border-stone-200 px-4 py-3">
-                    <h3 className="line-clamp-1 font-serif text-base font-bold text-emerald-950">
+                    <h3 className="line-clamp-1 text-base font-bold text-emerald-950">
                       {brand.name}
                     </h3>
                     <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-400 transition-colors group-hover:text-rose-400" />

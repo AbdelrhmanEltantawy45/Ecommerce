@@ -50,7 +50,7 @@ export default function Footer() {
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-300">
               Private client list
             </p>
-            <h3 className="font-serif text-2xl font-bold leading-tight sm:text-3xl">
+            <h3 className="text-2xl font-bold leading-tight sm:text-3xl">
               Be first to the new collections
             </h3>
             <p className="mt-3 text-sm text-emerald-100/80">
@@ -112,7 +112,7 @@ export default function Footer() {
 
         {/* Shop */}
         <div>
-          <h4 className="mb-4 font-serif text-lg font-bold">Shop</h4>
+          <h4 className="mb-4 text-lg font-bold">Shop</h4>
           <ul className="space-y-3">
             {shopLinks.map((l) => (
               <li key={l.to}>
@@ -126,7 +126,7 @@ export default function Footer() {
 
         {/* Account */}
         <div>
-          <h4 className="mb-4 font-serif text-lg font-bold">Account</h4>
+          <h4 className="mb-4 text-lg font-bold">Account</h4>
           <ul className="space-y-3">
             {accountLinks.map((l) => (
               <li key={l.to}>
@@ -140,7 +140,7 @@ export default function Footer() {
 
         {/* Contact */}
         <div>
-          <h4 className="mb-4 font-serif text-lg font-bold">Contact</h4>
+          <h4 className="mb-4 text-lg font-bold">Contact</h4>
           <ul className="space-y-3 text-sm text-emerald-100/80">
             <li className="flex items-start gap-3">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-rose-300" />

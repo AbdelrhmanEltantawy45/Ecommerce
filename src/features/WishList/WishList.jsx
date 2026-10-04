@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Heart, ShoppingBag, Star, X } from "lucide-react";
+import { Check, Heart, Loader2, ShoppingBag, Star, X } from "lucide-react";
 
 import { CartContext } from "../../app/Context/Cartcontext";
 
@@ -11,19 +11,34 @@ export default function WishList() {
   const [wishListItem, setwishListItem] = useState([]);
   const [isLoading, setisLoading] = useState(true);
 
-  let { getToWishList, addToCart, removeWishList } = useContext(CartContext);
-
+let {
+  getToWishList,
+  addToCart,
+  removeCartItem,
+  cartProductIds = [],
+  removeWishList,
+} = useContext(CartContext);
   async function getAllWishList() {
     let response = await getToWishList();
     setwishListItem(response?.data?.data ?? []);
     setisLoading(false);
   }
 
-  async function addcartitem(productId) {
-    let response = await addToCart(productId);
-    console.log(response);
-    setisLoading(false);
+
+
+
+
+const [pendingCartId, setPendingCartId] = useState(null);
+
+async function toggleCart(productId) {
+  setPendingCartId(productId);
+  if (cartProductIds.includes(productId)) {
+    await removeCartItem(productId);
+  } else {
+    await addToCart(productId);
   }
+  setPendingCartId(null);
+}
 
   async function clearWishListitem(productId) {
    
@@ -142,11 +157,34 @@ export default function WishList() {
                   </div>
 
                   <Button
-                    onClick={() => addcartitem(item._id)}
-                    className="mt-4 h-11 w-full rounded-lg bg-emerald-950 text-sm font-semibold text-white hover:bg-emerald-900"
-                  >
-                    <ShoppingBag className="mr-2 h-4 w-4" /> Add to cart
-                  </Button>
+  onClick={() => toggleCart(item._id)}
+  disabled={pendingCartId === item._id}
+  aria-pressed={cartProductIds.includes(item._id)}
+  aria-label={
+    cartProductIds.includes(item._id) ? "Remove from cart" : "Add to cart"
+  }
+  className={`mt-4 h-10 w-full gap-1.5 whitespace-nowrap rounded-lg px-2 text-xs font-semibold transition-colors sm:h-11 sm:gap-2 sm:px-4 sm:text-sm ${
+    cartProductIds.includes(item._id)
+      ? "border border-rose-300 bg-rose-50 text-rose-500 hover:bg-rose-100"
+      : "bg-emerald-950 text-white hover:bg-emerald-900"
+  }`}
+>
+  {pendingCartId === item._id ? (
+    <Loader2 className="h-4 w-4 animate-spin" />
+  ) : cartProductIds.includes(item._id) ? (
+    <>
+      <Check className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+      <span className="truncate sm:hidden">Remove</span>
+      <span className="hidden truncate sm:inline">Remove from cart</span>
+    </>
+  ) : (
+    <>
+      <ShoppingBag className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+      <span className="truncate sm:hidden">Add</span>
+      <span className="hidden truncate sm:inline">Add to cart</span>
+    </>
+  )}
+</Button>
                 </div>
               </div>
             ))}

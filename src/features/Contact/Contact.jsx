@@ -81,7 +81,7 @@ export default function Contact() {
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-rose-400">
             We'd love to hear from you
           </p>
-          <h1 className="font-serif text-3xl font-bold text-emerald-950 md:text-5xl">
+          <h1 className="text-3xl font-bold text-emerald-950 md:text-5xl">
             Get in touch
           </h1>
           <p className="mt-3 max-w-xl text-slate-600">
@@ -97,7 +97,7 @@ export default function Contact() {
             className="space-y-5 rounded-3xl border border-stone-200 bg-white p-6 shadow-sm md:p-8"
           >
             <div>
-              <h2 className="font-serif text-xl font-bold text-emerald-950">
+              <h2 className="text-xl font-bold text-emerald-950">
                 Send us a message
               </h2>
               <p className="mt-1 text-sm text-slate-600">
@@ -205,7 +205,7 @@ export default function Contact() {
           {/* Info + FAQ */}
           <aside className="space-y-6">
             <div className="rounded-3xl bg-emerald-950 p-6 text-white shadow-sm md:p-8">
-              <h2 className="font-serif text-xl font-bold">Contact details</h2>
+              <h2 className="text-xl font-bold">Contact details</h2>
               <ul className="mt-5 space-y-5">
                 {contactInfo.map(({ icon: Icon, title, text }) => (
                   <li key={title} className="flex items-start gap-4">
@@ -226,7 +226,7 @@ export default function Contact() {
             </div>
 
             <div className="rounded-3xl border border-stone-200 bg-white p-6 shadow-sm md:p-8">
-              <h2 className="font-serif text-xl font-bold text-emerald-950">
+              <h2 className="text-xl font-bold text-emerald-950">
                 Quick answers
               </h2>
               <Accordion type="single" collapsible className="mt-2">
